@@ -34,17 +34,19 @@ class InnerModelConfig:
 
 class DiT(nn.Module):
     def __init__(self, in_channels, out_channels, num_actions, num_steps_conditioning, 
-                 depth=2, num_heads=2, mlp_ratio=2.0, hidden_dim=128, patch_size=8):
+                 depth=2, num_heads=2, mlp_ratio=2.0, hidden_dim=192, patch_size=4):
         super().__init__()
         self.patch_size = patch_size
         self.hidden_dim = hidden_dim
-        
+        img_size = 64  # Added: Standard Atari resolution
         # 1. Patch Embedding
         self.patch_embed = nn.Conv2d((num_steps_conditioning + 1) * in_channels, 
                                      hidden_dim, kernel_size=patch_size, stride=patch_size)
         
         # 2. Positional Embedding
-        self.pos_embed = nn.Parameter(torch.zeros(1, 64, hidden_dim))
+        # New dynamic version
+        num_patches = (img_size // patch_size) ** 2  # (64 // 4)**2 = 256
+        self.pos_embed = nn.Parameter(torch.zeros(1, num_patches, self.hidden_dim))
         
         # 3. Conditionings
         self.noise_emb = nn.Sequential(

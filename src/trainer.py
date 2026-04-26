@@ -126,10 +126,10 @@ class Trainer(StateDictMixin):
                 out_channels=cfg.agent.denoiser.inner_model.img_channels, 
                 num_actions=num_actions,
                 num_steps_conditioning=cfg.agent.denoiser.inner_model.num_steps_conditioning,
-                depth=2,           # Only 2 layers!
-                num_heads=2,       # Only 2 heads!
-                hidden_dim=128,    # Very small hidden dim
-                mlp_ratio=2.0,     # Smaller MLP
+                depth=8,           
+                num_heads=6,       
+                hidden_dim=192,    
+                mlp_ratio=2.0,
             ).to(self._device)
             
             # Replace the inner_model
@@ -379,7 +379,7 @@ class Trainer(StateDictMixin):
             cfg = getattr(self._cfg, name).training
             if self.epoch > cfg.start_after_epochs:
                 if name == "denoiser":
-                    steps = 40  # Dropping from 100 to 40 saves ~19s per epoch
+                    steps = 100  # Dropping from 100 to 40 saves ~19s per epoch
                 elif name == "rew_end_model":
                     steps = 30
                 elif name == "actor_critic":
